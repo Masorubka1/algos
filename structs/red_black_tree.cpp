@@ -432,7 +432,7 @@ private:
 };
 
 
-int main()
+/*int main()
 {
     black_red_tree<int> a;
     set <int> q;
@@ -450,4 +450,4 @@ int main()
     cout << endl;
     //a.~black_red_tree(); se?
     return 0;
-}
+}*/
