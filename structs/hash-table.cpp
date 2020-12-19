@@ -122,6 +122,14 @@ public:
         }
         delete[] arr;
     }
+    int GetCount()
+    {
+        return size;
+    }
+    int GetCapacity()
+    {
+        return buffer_size;
+    }
     void add(const TKey& value, const TElement& val, const THash1& hash1 = THash1(),const THash2& hash2 = THash2())
     {
         if (size + 1 > int(rehash_size * buffer_size))
