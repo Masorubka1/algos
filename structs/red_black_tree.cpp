@@ -21,6 +21,7 @@ public:
     //set <T> a;
     black_red_tree()
     {
+        size = 0;
         root = new node;
         root->elem = 0;
         root->parent = nullptr;
@@ -63,34 +64,6 @@ public:
     {
         print();
         //cout << endl;
-    }
-    void inorder(node* cur, vector <node*> &tmp)
-    {
-        if(cur == NULL)
-        {
-            return;
-        }
-        inorder(cur->left, tmp);
-        tmp.push_back(cur);
-        inorder(cur->right, tmp);
-    }
-    void sew_tree()
-    {
-        vector <node*> tmp;
-        inorder(root, tmp);
-        if (tmp.size() == 1)
-        {
-            tmp[0]->next = tmp[0];
-            tmp[0]->prev = tmp[0];
-        }
-        tmp[0]->prev = tmp[tmp.size() - 1];
-        for (int i = 1; i < tmp.size(); ++i)
-        {
-            tmp[i - 1]->next = tmp[i];
-            tmp[i]->prev = tmp[i - 1];
-        }
-        tmp.back()->next = tmp[0];
-        cout << tmp.size() << endl;
     }
     void insert(T el)
     {
@@ -139,6 +112,7 @@ public:
         }
         insert_balance(x);
         sew_tree();
+        size++;
     }
     node* mini()
     {
@@ -158,7 +132,16 @@ public:
         }
         return cur;
     }
+    int get_size()
+    {
+        return size;
+    }
+    node* get_iterator()
+    {
+        return mini();
+    }
 private:
+    int size;
     node* root;
     void print()
     {
@@ -177,6 +160,33 @@ private:
             cur = cur->next;
         }
         cout << cur->elem << endl;
+    }
+    void inorder(node* cur, vector <node*> &tmp)
+    {
+        if(cur == NULL)
+        {
+            return;
+        }
+        inorder(cur->left, tmp);
+        tmp.push_back(cur);
+        inorder(cur->right, tmp);
+    }
+    void sew_tree()
+    {
+        vector <node*> tmp;
+        inorder(root, tmp);
+        if (tmp.size() == 1)
+        {
+            tmp[0]->next = tmp[0];
+            tmp[0]->prev = tmp[0];
+        }
+        tmp[0]->prev = tmp[tmp.size() - 1];
+        for (int i = 1; i < tmp.size(); ++i)
+        {
+            tmp[i - 1]->next = tmp[i];
+            tmp[i]->prev = tmp[i - 1];
+        }
+        tmp.back()->next = tmp[0];
     }
     void destroy_tree(node* leaf)
     {
