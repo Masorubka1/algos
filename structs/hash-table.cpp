@@ -29,23 +29,24 @@ struct HashFunction2
     }
 };
 
-template <class T, class THash1 = HashFunction1, class THash2 = HashFunction2>
+template <class TKey, class TElement, class THash1 = HashFunction1, class THash2 = HashFunction2>
 class HashTable
 {
     static const int default_size = 8;
     constexpr static const double rehash_size = 0.75;
     struct Node
     {
-        T value;
+        TKey value;
+        TElement val;
         bool state;
-        Node(const T& value_) : value(value_), state(true) {}
+        Node(const TKey& value_, const TElement& val_) : value(value_), val(val_), state(true) {}
     };
     Node** arr;
     int size;
     int buffer_size;
     int size_all_non_nullptr;
 
-    void Resize()
+    void resize()
     {
         int past_buffer_size = buffer_size;
         buffer_size *= 2;
@@ -59,7 +60,7 @@ class HashTable
         {
             if (arr2[i] && arr2[i]->state)
             {
-                Add(arr2[i]->value);
+                add(arr2[i]->value, arr2[i]->val);
             }
         }
         for (int i = 0; i < past_buffer_size; ++i)
@@ -71,7 +72,7 @@ class HashTable
         }
         delete[] arr2;
     }
-    void Rehash()
+    void rehash()
     {
         size_all_non_nullptr = 0;
         size = 0;
@@ -85,7 +86,7 @@ class HashTable
         {
             if (arr2[i] && arr2[i]->state)
             {
-                Add(arr2[i]->value);
+                add(arr2[i]->value, arr2[i]->val);
             }
         }
         for (int i = 0; i < buffer_size; ++i)
@@ -121,15 +122,15 @@ public:
         }
         delete[] arr;
     }
-    void Add(const T& value, const THash1& hash1 = THash1(),const THash2& hash2 = THash2())
+    void add(const TKey& value, const TElement& val, const THash1& hash1 = THash1(),const THash2& hash2 = THash2())
     {
         if (size + 1 > int(rehash_size * buffer_size))
         {
-            Resize();
+            resize();
         }
         else if (size_all_non_nullptr > 2 * size)
         {
-            Rehash();
+            rehash();
         }
         int h1 = hash1(value, buffer_size);
         int h2 = hash2(value, buffer_size);
@@ -150,7 +151,7 @@ public:
         }
         if (first_deleted == -1)
         {
-            arr[h1] = new Node(value);
+            arr[h1] = new Node(value, val);
             ++size_all_non_nullptr;
         }
         else
@@ -161,7 +162,7 @@ public:
         ++size;
         return;
     }
-    void Remove(const T& value, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
+    void remove(const TKey& value, const TElement& val, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
     {
         int h1 = hash1(value, buffer_size);
         int h2 = hash2(value, buffer_size);
@@ -179,7 +180,7 @@ public:
         }
         return;
     }
-    bool Find(const T& value, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
+    bool find(const TKey& value, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
     {
         int h1 = hash1(value, buffer_size);
         int h2 = hash2(value, buffer_size);
@@ -195,9 +196,9 @@ public:
         }
         return false;
     }
-    T Get(T& value)
+    TElement get(TKey& value, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
     {
-        if Find(value)
+        if (find(value))
         {
             int h1 = hash1(value, buffer_size);
             int h2 = hash2(value, buffer_size);
@@ -206,7 +207,7 @@ public:
             {
                 if (arr[h1]->value == value && arr[h1]->state)
                 {
-                    return arr[h1];
+                    return arr[h1]->val;
                 }
                 h1 = (h1 + h2) % buffer_size;
                 ++i;
@@ -215,6 +216,16 @@ public:
         else
         {
             throw "лажа, не существует элемента";
+            return 0;
         }
+
     }
 };
+
+/*int main()
+{
+    HashTable<string, int> a;
+    string s = "abacaba";
+    a.add(s, 1);
+    cout << a.get(s);
+}*/
