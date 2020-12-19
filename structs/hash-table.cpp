@@ -44,6 +44,7 @@ class HashTable
     int size;
     int buffer_size;
     int size_all_non_nullptr;
+
     void Resize()
     {
         int past_buffer_size = buffer_size;
@@ -57,30 +58,43 @@ class HashTable
         for (int i = 0; i < past_buffer_size; ++i)
         {
             if (arr2[i] && arr2[i]->state)
+            {
                 Add(arr2[i]->value);
+            }
         }
         for (int i = 0; i < past_buffer_size; ++i)
+        {
             if (arr2[i])
+            {
                 delete arr2[i];
+            }
+        }
         delete[] arr2;
     }
-
     void Rehash()
     {
         size_all_non_nullptr = 0;
         size = 0;
         Node** arr2 = new Node * [buffer_size];
         for (int i = 0; i < buffer_size; ++i)
+        {
             arr2[i] = nullptr;
+        }
         std::swap(arr, arr2);
         for (int i = 0; i < buffer_size; ++i)
         {
             if (arr2[i] && arr2[i]->state)
+            {
                 Add(arr2[i]->value);
+            }
         }
         for (int i = 0; i < buffer_size; ++i)
+        {
             if (arr2[i])
+            {
                 delete arr2[i];
+            }
+        }
         delete[] arr2;
     }
 
@@ -92,21 +106,31 @@ public:
         size_all_non_nullptr = 0;
         arr = new Node*[buffer_size];
         for (int i = 0; i < buffer_size; ++i)
+        {
             arr[i] = nullptr;
+        }
     }
     ~HashTable()
     {
         for (int i = 0; i < buffer_size; ++i)
+        {
             if (arr[i])
+            {
                 delete arr[i];
+            }
+        }
         delete[] arr;
     }
-    bool Add(const T& value, const THash1& hash1 = THash1(),const THash2& hash2 = THash2())
+    void Add(const T& value, const THash1& hash1 = THash1(),const THash2& hash2 = THash2())
     {
         if (size + 1 > int(rehash_size * buffer_size))
+        {
             Resize();
+        }
         else if (size_all_non_nullptr > 2 * size)
+        {
             Rehash();
+        }
         int h1 = hash1(value, buffer_size);
         int h2 = hash2(value, buffer_size);
         int i = 0;
@@ -114,9 +138,13 @@ public:
         while (arr[h1] != nullptr && i < buffer_size)
         {
             if (arr[h1]->value == value && arr[h1]->state)
-                return false;
+            {
+                return;
+            }
             if (!arr[h1]->state && first_deleted == -1)
+            {
                 first_deleted = h1;
+            }
             h1 = (h1 + h2) % buffer_size;
             ++i;
         }
@@ -131,9 +159,9 @@ public:
             arr[first_deleted]->state = true;
         }
         ++size;
-        return true;
+        return;
     }
-    bool Remove(const T& value, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
+    void Remove(const T& value, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
     {
         int h1 = hash1(value, buffer_size);
         int h2 = hash2(value, buffer_size);
@@ -144,12 +172,12 @@ public:
             {
                 arr[h1]->state = false;
                 --size;
-                return true;
+                return;
             }
             h1 = (h1 + h2) % buffer_size;
             ++i;
         }
-        return false;
+        return;
     }
     bool Find(const T& value, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
     {
@@ -159,10 +187,34 @@ public:
         while (arr[h1] != nullptr && i < buffer_size)
         {
             if (arr[h1]->value == value && arr[h1]->state)
+            {
                 return true;
+            }
             h1 = (h1 + h2) % buffer_size;
             ++i;
         }
         return false;
+    }
+    T Get(T& value)
+    {
+        if Find(value)
+        {
+            int h1 = hash1(value, buffer_size);
+            int h2 = hash2(value, buffer_size);
+            int i = 0;
+            while (arr[h1] != nullptr && i < buffer_size)
+            {
+                if (arr[h1]->value == value && arr[h1]->state)
+                {
+                    return arr[h1];
+                }
+                h1 = (h1 + h2) % buffer_size;
+                ++i;
+            }
+        }
+        else
+        {
+            throw "лажа, не существует элемента";
+        }
     }
 };
