@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
+#include "algos-structs/structs/dynamic_array.cpp"
 
 using namespace std;
 
-int partition(vector <int> &a, int l, int r)
+template <class T>
+int partition(dynamic_array <int> &a, int l, int r)
 {
     int ind_cmp = (l + r) / 2;//rand() % (r - l);
     int i = l;
@@ -26,7 +28,8 @@ int partition(vector <int> &a, int l, int r)
     return j;
 }
 
-void quick_sort(vector <int> &a, int l, int r)
+template <class T>
+void quick_sort(dynamic_array <T> &a, int l, int r)
 {
     if (l >= r)
         return;
@@ -35,7 +38,7 @@ void quick_sort(vector <int> &a, int l, int r)
     quick_sort(a, ind_cmp + 1, r);
 }
 
-int main()
+/*int main()
 {
     srand(time(NULL));
     vector <int> a = {329, 457, 839, 436, 720, 335};
@@ -44,4 +47,4 @@ int main()
     {
         cout << a[i] << " ";
     }
-}
+}*/

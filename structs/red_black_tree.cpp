@@ -3,167 +3,61 @@
 using namespace std;
 
 template <class T>
-class black_red_tree
+struct Node
 {
-    // 0 - black
-    // 1 - red
-    typedef struct node
-    {
-        node* left;
-        node* right;
-        node* parent;
-        node* next;
-        node* prev;
-        int typ;
-        T elem;
-    } node;
-public:
-    //set <T> a;
-    black_red_tree()
-    {
-        size = 0;
-        root = new node;
-        root->elem = 0;
-        root->parent = nullptr;
-        root->left = nullptr;
-        root->right = nullptr;
-        root->next = nullptr;
-        root->right = nullptr;
-        root->typ = 0;
-    }
-    ~black_red_tree()
-    {
-        destroy_tree(root);
-    }
-    node* search(T key)
-    {
-        node* current = root;
-        while(current != nullptr)
-        {
-            if(key < current->elem)
-            {
-                return current;
-            }
-            else
-            {
-                current = (key < current->elem) ? current->left : current->right;
-            }
-        }
-        return nullptr;
-    }
-    void del_node(T key)
-    {
-        node* cur = search(key);
-        if (cur == nullptr)
-        {
-            return;
-        }
-        delete_node(cur);
-    }
-    void Print()
-    {
-        print();
-        //cout << endl;
-    }
-    void insert(T el)
-    {
-        if (root->elem == T(0))
-        {
-            root = new node;
-            root->elem = el;
-            root->parent = nullptr;
-            root->left = nullptr;
-            root->right = nullptr;
-            root->typ = 0;
-            return;
-        }
-        node *current, *parent, *x;
-        current = root;
-        parent = nullptr;
-        while (current != nullptr)
-        {
-            if (el == current->elem)
-            {
-                return;
-            }
-            parent = current;
-            if (el < current->elem)
-            {
-                current = current->left;
-            }
-            else
-            {
-                current = current->right;
-            }
-        }
-        x = new node;
-        x->elem = el;
-        x->parent = parent;
-        x->left = nullptr;
-        x->right = nullptr;
-        x->typ = 1;
-        if(el < parent->elem)
-        {
-            parent->left = x;
-        }
-        else
-        {
-            parent->right = x;
-        }
-        insert_balance(x);
-        sew_tree();
-        size++;
-    }
-    node* mini()
-    {
-        node* cur = root;
-        while (cur->left != nullptr)
-        {
-            cur = cur->left;
-        }
-        return cur;
-    }
-    node* maxi()
-    {
-        node* cur = root;
-        while (cur->right != nullptr)
-        {
-            cur = cur->right;
-        }
-        return cur;
-    }
-    int get_size()
-    {
-        return size;
-    }
-    node* get_iterator()
-    {
-        return mini();
-    }
+    Node *left;
+    Node *right;
+    Node *parent;
+    Node *next;
+    Node *prev;
+    int color;
+    T data;
+};
+
+template <class T>
+class RedBlackTree
+{
 private:
-    int size;
-    node* root;
-    void print()
+    Node<T> *root;
+    Node<T> *TNULL;
+    void initializeNULLNode(Node<T> *node, Node<T> *parent)
     {
-        /*if (cur == nullptr)
-        {
-            return;
-        }
-        print(cur->left);
-        cout << cur->elem << " ";
-        print(cur->right);*/
-        node* cur = mini();
-        node* start = cur;
-        while (cur->next != start)
-        {
-            cout << cur->elem << " ";
-            cur = cur->next;
-        }
-        cout << cur->elem << endl;
+        node->data = 0;
+        node->parent = parent;
+        node->left = nullptr;
+        node->right = nullptr;
+        node->color = 0;
     }
-    void inorder(node* cur, vector <node*> &tmp)
+    void preOrderHelper(Node<T> *node)
     {
-        if(cur == NULL)
+        if (node != TNULL)
+        {
+            //cout << node->data << " ";
+            preOrderHelper(node->left);
+            preOrderHelper(node->right);
+        }
+    }
+    void inOrderHelper(Node<T> *node)
+    {
+        if (node != TNULL)
+        {
+            inOrderHelper(node->left);
+            //cout << node->data << " ";
+            inOrderHelper(node->right);
+        }
+    }
+    void postOrderHelper(Node<T> *node)
+    {
+        if (node != TNULL)
+        {
+            postOrderHelper(node->left);
+            postOrderHelper(node->right);
+            //cout << node->data << " ";
+        }
+    }
+    void inorder(Node<T>* cur, vector <Node<T>*> &tmp)
+    {
+        if(cur == TNULL)
         {
             return;
         }
@@ -173,7 +67,7 @@ private:
     }
     void sew_tree()
     {
-        vector <node*> tmp;
+        vector <Node<T>*> tmp;
         inorder(root, tmp);
         if (tmp.size() == 1)
         {
@@ -188,276 +82,486 @@ private:
         }
         tmp.back()->next = tmp[0];
     }
-    void destroy_tree(node* leaf)
+    Node<T> *searchTreeHelper(Node<T> *node, T key)
     {
-        if (leaf->left)
+        if (node == TNULL)
         {
-            destroy_tree(leaf->left);
+            return nullptr;
         }
-        if (leaf->right)
+        if (key == node->data)
         {
-            destroy_tree(leaf->right);
+            return node;
         }
-        delete leaf;
+
+        if (key < node->data)
+        {
+            return searchTreeHelper(node->left, key);
+        }
+        return searchTreeHelper(node->right, key);
     }
-    void insert_balance(node* cur)
+    void deleteFix(Node<T> *x)
     {
-        while (cur != root && cur->parent->typ == 1)
+        Node<T> *s;
+        while (x != root && x->color == 0)
         {
-            if (cur->parent == cur->parent->parent->left)
+            if (x == x->parent->left)
             {
-                node* y = cur->parent->parent->right;
-                if (y != nullptr && y->typ == 1)
+                s = x->parent->right;
+                if (s->color == 1)
                 {
-                    cur->parent->typ = 0;
-                    y->typ = 0;
-                    cur->parent->parent->typ = 1;
-                    cur = cur->parent->parent;
+                    s->color = 0;
+                    x->parent->color = 1;
+                    leftRotate(x->parent);
+                    s = x->parent->right;
+                }
+
+                if (s->left->color == 0 && s->right->color == 0)
+                {
+                    s->color = 1;
+                    x = x->parent;
                 }
                 else
                 {
-                    if (cur == cur->parent->right)
+                    if (s->right->color == 0)
                     {
-                        cur = cur->parent;
-                        rotate_Left(cur);
+                        s->left->color = 0;
+                        s->color = 1;
+                        rightRotate(s);
+                        s = x->parent->right;
                     }
-                    cur->parent->typ = 0;
-                    cur->parent->parent->typ = 1;
-                    rotate_Right(cur->parent->parent);
+
+                    s->color = x->parent->color;
+                    x->parent->color = 0;
+                    s->right->color = 0;
+                    leftRotate(x->parent);
+                    x = root;
                 }
             }
             else
             {
-                node* y = cur->parent->parent->left;
-                if (y != nullptr && y->typ == 1)
+                s = x->parent->left;
+                if (s->color == 1)
                 {
-                    cur->parent->typ = 0;
-                    y->typ = 0;
-                    cur->parent->parent->typ = 1;
-                    cur = cur->parent->parent;
+                    s->color = 0;
+                    x->parent->color = 1;
+                    rightRotate(x->parent);
+                    s = x->parent->left;
+                }
+
+                if (s->right->color == 0 && s->right->color == 0)
+                {
+                    s->color = 1;
+                    x = x->parent;
                 }
                 else
                 {
-                    if (cur == cur->parent->left)
+                    if (s->left->color == 0)
                     {
-                        cur = cur->parent;
-                        rotate_Right(cur);
+                        s->right->color = 0;
+                        s->color = 1;
+                        leftRotate(s);
+                        s = x->parent->left;
                     }
-                    cur->parent->typ = 0;
-                    cur->parent->parent->typ = 1;
-                    rotate_Left(cur->parent->parent);
+
+                    s->color = x->parent->color;
+                    x->parent->color = 0;
+                    s->left->color = 0;
+                    rightRotate(x->parent);
+                    x = root;
                 }
             }
         }
-        root->typ = 0;
+        x->color = 0;
     }
-    void rotate_Left(node* cur)
+    void rbTransplant(Node<T> *u, Node<T> *v)
     {
-        node* y = cur->right;
-        cur->right = y->left;
-        if (y->left != nullptr)
+        if (u->parent == nullptr)
         {
-            y->left->parent = cur;
+            root = v;
         }
-        if (y != nullptr)
+        else if (u == u->parent->left)
         {
-            y->parent = cur->parent;
-        }
-        if (cur->parent)
-        {
-            if (cur == cur->parent->left)
-            {
-                cur->parent->left = y;
-            }
-            else
-            {
-                cur->parent->right = y;
-            }
+            u->parent->left = v;
         }
         else
         {
-            root = y;
+            u->parent->right = v;
         }
-        y->left = cur;
-        if (cur != nullptr)
-        {
-            cur->parent = y;
-        }
+        v->parent = u->parent;
     }
-    void rotate_Right(node* cur)
+    void deleteNodeHelper(Node<T> *node, T key)
     {
-        node* y = cur->left;
-        cur->left = y->right;
-        if (y->right != nullptr)
+        Node<T> *z = TNULL;
+        Node<T> *x;
+        Node<T> *y;
+        while (node != TNULL)
         {
-            y->right->parent = cur;
-        }
-        if (y != nullptr)
-        {
-            y->parent = cur->parent;
-        }
-        if (cur->parent)
-        {
-            if (cur == cur->parent->right)
+            if (node->data == key)
             {
-                cur->parent->right = y;
+                z = node;
+            }
+
+            if (node->data <= key)
+            {
+                node = node->right;
             }
             else
             {
-                cur->parent->left = y;
+                node = node->left;
             }
         }
-        else
-        {
-            root = y;
-        }
-        y->right = cur;
-        if (cur != nullptr)
-        {
-            cur->parent = y;
-        }
-    }
-    void delete_balanse(node* cur)
-    {
-        while (cur != root && cur->typ == 0)
-        {
-            if (cur == cur->parent->left)
-            {
-                node* w = cur->parent->right;
-                if (w->typ == 1) {
-                    w->typ = 0;
-                    cur->parent->typ = 1;
-                    rotate_Left(cur->parent);
-                    w = cur->parent->right;
-                }
-                if (w->left->typ == 0 && w->right->typ == 0)
-                {
-                    w->typ = 1;
-                    cur = cur->parent;
-                }
-                else
-                {
-                    if (w->right->typ == 0)
-                    {
-                        w->left->typ = 0;
-                        w->typ = 1;
-                        rotate_Right(w);
-                        w = cur->parent->right;
-                    }
-                    w->typ = cur->parent->typ;
-                    cur->parent->typ = 0;
-                    w->right->typ = 0;
-                    rotate_Left(cur->parent);
-                    cur = root;
-                }
-            }
-            else
-            {
-                node* w = cur->parent->left;
-                if (w->typ == 1)
-                {
-                    w->typ = 0;
-                    cur->parent->typ = 0;
-                    rotate_Right(cur->parent);
-                    w = cur->parent->left;
-                }
-                if (w->right->typ == 0 && w->left->typ == 0)
-                {
-                    w->typ = 1;
-                    cur = cur->parent;
-                }
-                else
-                {
-                    if (w->left->typ == 0)
-                    {
-                        w->right->typ = 0;
-                        w->typ = 1;
-                        rotate_Left(w);
-                        w = cur->parent->left;
-                    }
-                    w->typ = cur->parent->typ;
-                    cur->parent->typ = 0;
-                    w->left->typ = 0;
-                    rotate_Right(cur->parent);
-                    cur = root;
-                }
-            }
-        }
-        cur->typ = 0;
-    }
-    void delete_node(node* cur)
-    {
-        node* x;
-        node* y;
-        if (!cur || cur == nullptr)
+
+        if (z == TNULL)
         {
             return;
         }
-        if (cur->left == nullptr || cur->right == nullptr)
+
+        y = z;
+        int y_original_color = y->color;
+        if (z->left == TNULL)
         {
-            y = cur;
+            x = z->right;
+            rbTransplant(z, z->right);
+        }
+        else if (z->right == TNULL)
+        {
+            x = z->left;
+            rbTransplant(z, z->left);
         }
         else
         {
-            y = cur->right;
-            while (y->left != nullptr)
-            {
-                y = y->left;
-            }
-        }
-        if (y->left != nullptr)
-        {
-            x = y->left;
-        }
-        else
-        {
+            y = minimum(z->right);
+            y_original_color = y->color;
             x = y->right;
-        }
-        x->parent = y->parent;
-        if (y->parent)
-        {
-            if (y == y->parent->left)
+            if (y->parent == z)
             {
-                y->parent->left = x;
+                x->parent = y;
             }
             else
             {
-                y->parent->right = x;
+                rbTransplant(y, y->right);
+                y->right = z->right;
+                y->right->parent = y;
             }
+
+            rbTransplant(z, y);
+            y->left = z->left;
+            y->left->parent = y;
+            y->color = z->color;
+        }
+        delete z;
+        if (y_original_color == 0)
+        {
+            deleteFix(x);
+        }
+    }
+    void insertFix(Node<T> *k)
+    {
+        Node<T> *u;
+        while (k->parent->color == 1)
+        {
+            if (k->parent == k->parent->parent->right)
+            {
+                u = k->parent->parent->left;
+                if (u->color == 1)
+                {
+                    u->color = 0;
+                    k->parent->color = 0;
+                    k->parent->parent->color = 1;
+                    k = k->parent->parent;
+                }
+                else
+                {
+                    if (k == k->parent->left)
+                    {
+                        k = k->parent;
+                        rightRotate(k);
+                    }
+                    k->parent->color = 0;
+                    k->parent->parent->color = 1;
+                    leftRotate(k->parent->parent);
+                }
+            }
+            else
+            {
+                u = k->parent->parent->right;
+
+                if (u->color == 1)
+                {
+                    u->color = 0;
+                    k->parent->color = 0;
+                    k->parent->parent->color = 1;
+                    k = k->parent->parent;
+                }
+                else
+                {
+                    if (k == k->parent->right)
+                    {
+                        k = k->parent;
+                        leftRotate(k);
+                    }
+                    k->parent->color = 0;
+                    k->parent->parent->color = 1;
+                    rightRotate(k->parent->parent);
+                }
+            }
+            if (k == root)
+            {
+                break;
+            }
+        }
+        root->color = 0;
+    }
+
+    void printHelper(Node<T> *root, string indent, bool last)
+    {
+        if (root != TNULL)
+        {
+            printHelper(root->left, indent, false);
+            cout << root->data << " ";
+            printHelper(root->right, indent, true);
+        }
+    }
+
+public:
+    RedBlackTree()
+    {
+        TNULL = new Node<T>;
+        TNULL->color = 0;
+        TNULL->left = nullptr;
+        TNULL->right = nullptr;
+        TNULL->next = nullptr;
+        TNULL->prev = nullptr;
+        root = TNULL;
+    }
+
+    void preorder()
+    {
+        preOrderHelper(this->root);
+    }
+
+    void inorder()
+    {
+        inOrderHelper(this->root);
+    }
+
+    void postorder()
+    {
+        postOrderHelper(this->root);
+    }
+
+    Node<T> *searchTree(T k)
+    {
+        return searchTreeHelper(this->root, k);
+    }
+
+    Node<T> *minimum(Node<T> *node)
+    {
+        while (node->left != TNULL)
+        {
+            node = node->left;
+        }
+        return node;
+    }
+
+    Node<T> *maximum(Node<T> *node)
+    {
+        while (node->right != TNULL)
+        {
+            node = node->right;
+        }
+        return node;
+    }
+
+    Node<T> *successor(Node<T> *x)
+    {
+        if (x->right != TNULL)
+        {
+            return minimum(x->right);
+        }
+
+        Node<T> *y = x->parent;
+        while (y != TNULL && x == y->right)
+        {
+            x = y;
+            y = y->parent;
+        }
+        return y;
+    }
+
+    Node<T> *predecessor(Node<T> *x)
+    {
+        if (x->left != TNULL)
+        {
+            return maximum(x->left);
+        }
+
+        Node<T> *y = x->parent;
+        while (y != TNULL && x == y->left)
+        {
+            x = y;
+            y = y->parent;
+        }
+
+        return y;
+    }
+
+    void leftRotate(Node<T> *x)
+    {
+        Node<T> *y = x->right;
+        x->right = y->left;
+        if (y->left != TNULL)
+        {
+            y->left->parent = x;
+        }
+        y->parent = x->parent;
+        if (x->parent == nullptr)
+        {
+            this->root = y;
+        }
+        else if (x == x->parent->left)
+        {
+            x->parent->left = y;
         }
         else
         {
-            root = x;
+            x->parent->right = y;
         }
-        if (y != cur)
+        y->left = x;
+        x->parent = y;
+    }
+
+    void rightRotate(Node<T> *x)
+    {
+        Node<T> *y = x->left;
+        x->left = y->right;
+        if (y->right != TNULL)
         {
-            cur->elem = y->elem;
+            y->right->parent = x;
         }
-        if (y->typ == 0)
+        y->parent = x->parent;
+        if (x->parent == nullptr)
         {
-            delete_balanse(x);
+            this->root = y;
         }
-        delete y;
+        else if (x == x->parent->right)
+        {
+            x->parent->right = y;
+        }
+        else
+        {
+            x->parent->left = y;
+        }
+        y->right = x;
+        x->parent = y;
+    }
+
+    void insert(T key)
+    {
+        Node<T> *node = new Node<T>;
+        node->parent = nullptr;
+        node->data = key;
+        node->left = TNULL;
+        node->right = TNULL;
+        node->color = 1;
+
+        Node<T> *y = nullptr;
+        Node<T> *x = this->root;
+
+        while (x != TNULL)
+        {
+            y = x;
+            if (node->data < x->data)
+            {
+                x = x->left;
+            }
+            else
+            {
+                x = x->right;
+            }
+        }
+
+        node->parent = y;
+        if (y == nullptr)
+        {
+            root = node;
+        }
+        else if (node->data < y->data)
+        {
+            y->left = node;
+        }
+        else
+        {
+            y->right = node;
+        }
+
+        if (node->parent == nullptr)
+        {
+            node->color = 0;
+            return;
+        }
+
+        if (node->parent->parent == nullptr)
+        {
+            return;
+        }
+
+        insertFix(node);
+    }
+    void Sew()
+    {
+        inorder();
+    }
+    Node<T> *getRoot()
+    {
+        return this->root;
+    }
+    void deleteNode(T data)
+    {
+        deleteNodeHelper(this->root, data);
+    }
+
+    void printTree()
+    {
+        if (root)
+        {
+            printHelper(this->root, "", true);
+        }
+    }
+    bool is_bst(Node<T> *node, T minKey, T maxKey)
+    {
+        if (node == TNULL)
+        {
+            return true;
+        }
+        if (node->key < minKey || node->key > maxKey)
+        {
+            return false;
+        }
+        return is_bst(node->left, minKey, node->key - 1) && is_bst(node->right, node->key + 1, maxKey);
+    }
+    bool isBST()
+    {
+        return is_bst(root, root->data, root->data);
     }
 };
 
-
 /*int main()
 {
-    black_red_tree<int> a;
-    set <int> q;
-    vector <int>  arr = {2 ,1, 5, 3, 10, 20, 19, 7, 4, 9};
-    for (int i = 0; i < arr.size(); ++i)
+    RedBlackTree<int> bst;
+    bst.insert(55);
+    bst.insert(40);
+    bst.insert(65);
+    bst.insert(60);
+    bst.insert(75);
+    bst.insert(57);
+    bst.Sew();
+
+    Node<int> *start = bst.minimum(bst.getRoot());
+    Node<int> *finish = start->prev;
+    while (start != finish)
     {
-        q.insert(arr[i]);
-        a.insert(arr[i]);
+        cout << start->data << " ";
+        start = start->next;
     }
-    a.Print();
-    for (auto i : q)
-    {
-        cout << i << " ";
-    }
-    cout << endl;
-    //a.~black_red_tree(); se?
-    return 0;
 }*/

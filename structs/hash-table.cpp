@@ -5,7 +5,7 @@ using namespace std;
 int HashFunctionHorner(const std::string& s, int table_size, const int key)
 {
     int hash_result = 0;
-    for (int i = 0; s[i] != s.size(); ++i)
+    for (int i = 0; i < s.size(); ++i)
     {
         hash_result = (key * hash_result + s[i]) % table_size;
     }
@@ -165,12 +165,13 @@ public:
         else
         {
             arr[first_deleted]->value = value;
+            arr[first_deleted]->val = val;
             arr[first_deleted]->state = true;
         }
         ++size;
         return;
     }
-    void remove(const TKey& value, const TElement& val, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
+    void remove(const TKey& value, const THash1& hash1 = THash1(), const THash2& hash2 = THash2())
     {
         int h1 = hash1(value, buffer_size);
         int h2 = hash2(value, buffer_size);
@@ -215,7 +216,8 @@ public:
             {
                 if (arr[h1]->value == value && arr[h1]->state)
                 {
-                    return arr[h1]->val;
+                    Node* help = arr[h1];
+                    return help->val;
                 }
                 h1 = (h1 + h2) % buffer_size;
                 ++i;

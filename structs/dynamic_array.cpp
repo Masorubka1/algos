@@ -66,14 +66,14 @@ class dynamic_array
     {
         return m_size;
     }
-    T & operator[] (int i)
+    T& operator[] (int i)
     {
         return m_data[i];
     }
 };
 
 template<typename T>
-ostream & operator << (ostream & out, dynamic_array<T> a)
+ostream& operator << (ostream& out, dynamic_array<T> a)
 {
     for (int i = 0; i < a.size(); ++i)
         out << a[i] << " ";
