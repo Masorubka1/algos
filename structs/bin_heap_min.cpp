@@ -74,13 +74,3 @@ public:
         shift_up(a.size() - 1);
     }
 };
-
-int main()
-{
-    vector <int> a = {329, 457, 839, 436, 720, 335};
-    Bin_heap help(a);
-    for (int i = 0; i < a.size(); ++i)
-    {
-        cout << a[i] << " ";
-    }
-}

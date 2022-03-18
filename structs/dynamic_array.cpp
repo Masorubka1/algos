@@ -56,6 +56,7 @@ class dynamic_array
             m_capacity = new_capacity;
         }
         m_size = size;
+        return 0;
     }
     void push_back(T val)
     {

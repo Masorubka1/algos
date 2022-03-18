@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
-#include "algos-structs/structs/dynamic_array.cpp"
+#include "../structs/dynamic_array.cpp"
+#pragma once
 
 using namespace std;
 
 template <class T>
-int partition(dynamic_array <int> &a, int l, int r)
+int partition(vector <T> &a, int l, int r)
 {
     int ind_cmp = (l + r) / 2;//rand() % (r - l);
     int i = l;
@@ -29,7 +30,7 @@ int partition(dynamic_array <int> &a, int l, int r)
 }
 
 template <class T>
-void quick_sort(dynamic_array <T> &a, int l, int r)
+void quick_sort(vector <T> &a, int l, int r)
 {
     if (l >= r)
         return;

@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#pragma once
 
 using namespace std;
 
@@ -84,7 +85,7 @@ void heap_sort(vector <int> &inp)
     }
 }
 
-int main()
+/*int main()
 {
     vector <int> a = {329, 457, 839, 436, 720, 335};
     heap_sort(a);
@@ -92,4 +93,4 @@ int main()
     {
         cout << a[i] << " ";
     }
-}
+}*/

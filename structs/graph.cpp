@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
-#include "/home/xz/programs/algos/algos-structs/structs/DSU.cpp"
+#include "../structs/DSU.cpp"
+#pragma once
 
 using namespace std;
 
@@ -15,7 +16,8 @@ public:
     void FordBellman(int v);
     void dijkstra(int v);
     void kruskal();
-    void top_sort();
+    void dfs(int v, vector <vector <int>> &g, vector <int> &used);
+    vector<pair<int, int>> top_sort();
 
 private:
     bool is_oriented;
@@ -164,7 +166,7 @@ void Graph<T>::kruskal()
 }
 
 template <class T>
-pair<vector<int>, vector<int>> Graph<T>::top_sort()
+vector<pair<int, int>> Graph<T>::top_sort()
 {
     vector<pair<int, int>> tout;
     int tim = 0;
@@ -176,6 +178,16 @@ pair<vector<int>, vector<int>> Graph<T>::top_sort()
             Top_sort(g, used, tim, tout);
         }
     }
+    return tout;
+}
+
+template <class T>
+void Graph<T>::dfs(int v, vector <vector <int>> &g, vector <int> &used) {
+    used[v] = 1;
+    for (int i = 0; i < g[v].size(); ++i){
+        if (!used[i])
+            Graph<T>::dfs(i, g, used);
+    }
 }
 
 void Top_sorted(int u, vector <vector <int>> &g, vector <int> &used, int tim, vector<pair<int, int>> &tout)
@@ -185,7 +197,7 @@ void Top_sorted(int u, vector <vector <int>> &g, vector <int> &used, int tim, ve
     {
         if (!used[v])
         {
-            dfs(v, g, used, tim + 1, tout);
+            Top_sorted(v, g, used, tim + 1, tout);
         }
     }
     tout[u].second = u;

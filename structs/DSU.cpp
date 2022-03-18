@@ -3,6 +3,7 @@
 using namespace std;
 
 #define N 300001
+#pragma once
 
 template <class T>
 class DSU

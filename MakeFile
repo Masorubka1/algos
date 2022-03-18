@@ -1,0 +1,5 @@
+build-sorts:
+	g++ sorts/unit_tests_sorts.cpp -O2 -o test
+
+build-structs:
+	g++ structs/unit_tests_sturcts.cpp -O2 -o test

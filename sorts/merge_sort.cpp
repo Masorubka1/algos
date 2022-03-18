@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#pragma once
 
 using namespace std;
 
@@ -46,7 +47,7 @@ void merge_sort(vector <int> &a, int l, int r)
     merge(a, l, r);
 }
 
-int main()
+/*int main()
 {
     vector <int> a = {329, 457, 839, 436, 720, 335};
     merge_sort(a, 0, a.size());
@@ -54,4 +55,4 @@ int main()
     {
         cout << a[i] << " ";
     }
-}
+}*/

@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#pragma once
 
 using namespace std;
 
@@ -30,7 +31,7 @@ void radix_sort(vector <int> &a, int len)
     radix_sort(a, len + 1);
 }
 
-int main()
+/*int main()
 {
     vector <int> a = {329, 457, 657, 839, 436, 720, 335};
     radix_sort(a, 0);
@@ -38,4 +39,4 @@ int main()
     {
         cout << a[i] << " ";
     }
-}
+}*/
