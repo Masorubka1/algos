@@ -24,12 +24,9 @@ public:
     }
     void fill(vector <int> inp)
     {
-        a.resize(inp.size());
-        a[0] = inp[0];
-        for (int i = 1; i < inp.size(); ++i)
+        for (auto i : inp)
         {
-            a[i] = inp[i];
-            shift_up(i);
+            this->insert(i);
         }
     }
     void shift_down(int i)
@@ -62,9 +59,12 @@ public:
     int get_min()
     {
         int min = a[0];
-        swap(a[a.size() - 1], a[0]);
-        a.resize(a.size() - 1);
-        shift_down(0);
+        if (a.size() > 1)
+        {
+            swap(a[a.size() - 1], a[0]);
+            a.resize(a.size() - 1);
+            shift_down(0);
+        }   
         return min;
     }
     void insert(int el)

@@ -225,7 +225,7 @@ public:
         }
         else
         {
-            throw "лажа, не существует элемента";
+            throw "Unexist element";
             return 0;
         }
 

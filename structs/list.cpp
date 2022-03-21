@@ -15,18 +15,6 @@ public:
     List(int n = 0)
     {
         start = nullptr;
-        /*start = new _list;
-        _list* cur = start;
-        _list* prev = nullptr;
-        capacity = 1;
-        for (int i = 0; i < n - 1; ++i)
-        {
-            cur->next = new _list;
-            cur->prev = prev;
-            prev= cur;
-            cur = cur->next;
-            capacity++;
-        }*/
     }
     void push(T elem)
     {
@@ -61,35 +49,6 @@ public:
             prev = cur;
             cur = cur->next;
         }
-        /*if (cur->elem == elem)
-        {
-            if (capacity == 1)
-            {
-                start = nullptr;
-                capacity--;
-            }
-            if (cur->prev == nullptr)
-            {
-                start = cur->next;
-            }
-            else if (cur->next == nullptr)
-            {
-                cur->prev->next = nullptr;
-            }
-            else
-            {
-                cur->prev->next = cur->next;
-                cur->next->prev = cur->prev;
-            }
-            T el = cur->elem;
-            delete cur;
-            return el;
-        }
-        else
-        {
-            cerr << "Warning there is nothing to pop\n";
-            return 0;
-        }*/
         if (prev == nullptr)
         {
             start = nullptr;

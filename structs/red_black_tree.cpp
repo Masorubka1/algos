@@ -32,7 +32,6 @@ private:
     {
         if (node != TNULL)
         {
-            //cout << node->data << " ";
             preOrderHelper(node->left);
             preOrderHelper(node->right);
         }
@@ -42,7 +41,6 @@ private:
         if (node != TNULL)
         {
             inOrderHelper(node->left);
-            //cout << node->data << " ";
             inOrderHelper(node->right);
         }
     }
@@ -52,7 +50,6 @@ private:
         {
             postOrderHelper(node->left);
             postOrderHelper(node->right);
-            //cout << node->data << " ";
         }
     }
     void inorder(Node<T>* cur, vector <Node<T>*> &tmp)

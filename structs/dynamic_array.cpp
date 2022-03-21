@@ -61,7 +61,7 @@ class dynamic_array
     void push_back(T val)
     {
         resize(m_size + 1);
-        m_data[m_size - 1] = val;
+        m_data[m_size] = val;
     }
     int size() const
     {
