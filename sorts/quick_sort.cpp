@@ -5,23 +5,20 @@
 using namespace std;
 
 template <class T>
-int partition(vector <T> &a, int l, int r)
-{
-    int ind_cmp = (l + r) / 2;//rand() % (r - l);
+int partition(vector <T> &a, int l, int r) {
+    int ind_cmp = (l + r) / 2;  // rand() % (r - l);
     int i = l;
     int j = r;
-    while (i <= j)
-    {
-        while (a[i] < a[ind_cmp])
-        {
+    while (i <= j) {
+        while (a[i] < a[ind_cmp]) {
             ++i;
         }
-        while (a[j] > a[ind_cmp])
-        {
+        while (a[j] > a[ind_cmp]) {
             --j;
         }
-        if (i >= j)
+        if (i >= j) {
             break;
+        }
         swap(a[i], a[j]);
         i++;
         j--;
@@ -30,10 +27,10 @@ int partition(vector <T> &a, int l, int r)
 }
 
 template <class T>
-void quick_sort(vector <T> &a, int l, int r)
-{
-    if (l >= r)
+void quick_sort(vector <T> &a, int l, int r) {
+    if (l >= r) {
         return;
+    }
     int ind_cmp = partition(a, l, r);
     quick_sort(a, l, ind_cmp);
     quick_sort(a, ind_cmp + 1, r);

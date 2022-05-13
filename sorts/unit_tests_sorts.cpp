@@ -7,35 +7,34 @@
 
 using namespace std;
 
-vector <int> test_heap_sort(vector <int> &inp) {
+vector <int> test_heap_sort(const vector <int> &inp) {
     Bin_heap help(inp);
     vector <int> ans(inp.size());
-    for (int i = 0; i < inp.size(); ++i)
-    {
+    for (int i = 0; i < inp.size(); ++i) {
         ans[i] = help.get_min();
     }
     return ans;
 }
 
-vector <int> test_merge_sort(vector <int> &inp) {
+vector <int> test_merge_sort(const vector <int> &inp) {
     vector<int> ans = inp;
     merge_sort(ans, 0, ans.size());
     return ans;
 }
 
-vector <int> test_quick_sort(vector <int> &inp) {
+vector <int> test_quick_sort(const vector <int> &inp) {
     vector <int> ans = inp;
     quick_sort(ans, 0, ans.size() - 1);
     return ans;
 }
 
-vector <int> test_radix_sort(vector <int> &inp) {
+vector <int> test_radix_sort(const vector <int> &inp) {
     vector <int> ans = inp;
     radix_sort(ans, 0);
     return ans;
 }
 
-int main(){
+int main() {
     vector <int> a = {329, 457, 839, 436, 720, 335};
     vector <int> expect = a;
     sort(expect.begin(), expect.end());
