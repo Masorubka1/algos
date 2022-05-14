@@ -17,7 +17,7 @@ class RedBlackTree {
     Node<T> *root;
     Node<T> *TNULL;
 
-    Node<T> *searchTreeHelper(Node<T> *node, T key) {
+    Node<T> *_search_tree(Node<T> *node, T key) {
         if (node == TNULL) {
             return nullptr;
         }
@@ -25,50 +25,50 @@ class RedBlackTree {
             return node;
         }
         if (key < node->data) {
-            return this->searchTreeHelper(node->left, key);
+            return this->_search_tree(node->left, key);
         }
-        return this->searchTreeHelper(node->right, key);
+        return this->_search_tree(node->right, key);
     }
 
-    void initializeNULLNode(Node<T> *node, Node<T> *parent) {
+    void _initialize_null_node(Node<T> *node, Node<T> *parent) {
         node->data = 0;
         node->parent = parent;
         node->left = nullptr;
         node->right = nullptr;
         node->color = 0;
     }
-    void preOrderHelper(Node<T> *node) {
+    void _preorder(Node<T> *node) {
         if (node != TNULL) {
             // cout << node->data << " ";
-            this->preOrderHelper(node->left);
-            this->preOrderHelper(node->right);
+            this->_preorder(node->left);
+            this->_preerder(node->right);
         }
     }
-    void inOrderHelper(Node<T> *node) {
+    void _inorder(Node<T> *node) {
         if (node != TNULL) {
-            this->inOrderHelper(node->left);
+            this->_inorder(node->left);
             // cout << node->data << " ";
-            this->inOrderHelper(node->right);
+            this->_inorder(node->right);
         }
     }
-    void postOrderHelper(Node<T> *node) {
+    void _postorder(Node<T> *node) {
         if (node != TNULL) {
-            this->postOrderHelper(node->left);
-            this->postOrderHelper(node->right);
+            this->_postorder(node->left);
+            this->_postorder(node->right);
             // cout << node->data << " ";
         }
     }
-    void inorder(Node<T>* cur, std::vector<Node<T>*> &tmp) {
+    void _inorder(Node<T>* cur, std::vector<Node<T>*> &tmp) {
         if (cur == TNULL) {
             return;
         }
-        this->inorder(cur->left, tmp);
+        this->_inorder(cur->left, tmp);
         tmp.push_back(cur);
-        this->inorder(cur->right, tmp);
+        this->_inorder(cur->right, tmp);
     }
-    void sew_tree() {
+    void _sew_tree() {
         std::vector<Node<T>*> tmp;
-        this->inorder(root, tmp);
+        this->_inorder(root, tmp);
         if (tmp.size() == 1) {
             tmp[0]->next = tmp[0];
             tmp[0]->prev = tmp[0];
@@ -80,7 +80,7 @@ class RedBlackTree {
         }
         tmp.back()->next = tmp[0];
     }
-    void deleteFix(Node<T> *x) {
+    void _delete(Node<T> *x) {
         Node<T> *s;
         while (x != root && x->color == 0) {
             if (x == x->parent->left) {
@@ -88,7 +88,7 @@ class RedBlackTree {
                 if (s->color == 1) {
                     s->color = 0;
                     x->parent->color = 1;
-                    this->leftRotate(x->parent);
+                    this->_left_rotate(x->parent);
                     s = x->parent->right;
                 }
                 if (s->left->color == 0 && s->right->color == 0) {
@@ -98,13 +98,13 @@ class RedBlackTree {
                     if (s->right->color == 0) {
                         s->left->color = 0;
                         s->color = 1;
-                        this->rightRotate(s);
+                        this->_right_rotate(s);
                         s = x->parent->right;
                     }
                     s->color = x->parent->color;
                     x->parent->color = 0;
                     s->right->color = 0;
-                    this->leftRotate(x->parent);
+                    this->_left_rotate(x->parent);
                     x = root;
                 }
             } else {
@@ -112,7 +112,7 @@ class RedBlackTree {
                 if (s->color == 1) {
                     s->color = 0;
                     x->parent->color = 1;
-                    this->rightRotate(x->parent);
+                    this->_right_rotate(x->parent);
                     s = x->parent->left;
                 }
                 if (s->right->color == 0 && s->right->color == 0) {
@@ -122,20 +122,20 @@ class RedBlackTree {
                     if (s->left->color == 0) {
                         s->right->color = 0;
                         s->color = 1;
-                        this->leftRotate(s);
+                        this->_left_rotate(s);
                         s = x->parent->left;
                     }
                     s->color = x->parent->color;
                     x->parent->color = 0;
                     s->left->color = 0;
-                    this->rightRotate(x->parent);
+                    this->_right_rotate(x->parent);
                     x = root;
                 }
             }
         }
         x->color = 0;
     }
-    void rbTransplant(Node<T> *u, Node<T> *v) {
+    void _rb_transplant(Node<T> *u, Node<T> *v) {
         if (u->parent == nullptr) {
             root = v;
         } else if (u == u->parent->left) {
@@ -145,7 +145,7 @@ class RedBlackTree {
         }
         v->parent = u->parent;
     }
-    void deleteNodeHelper(Node<T> *node, T key) {
+    void _delete_node(Node<T> *node, T key) {
         Node<T> *z = TNULL;
         Node<T> *x;
         Node<T> *y;
@@ -166,10 +166,10 @@ class RedBlackTree {
         int y_original_color = y->color;
         if (z->left == TNULL) {
             x = z->right;
-            this->rbTransplant(z, z->right);
+            this->_rb_transplant(z, z->right);
         } else if (z->right == TNULL) {
             x = z->left;
-            this->rbTransplant(z, z->left);
+            this->_rb_transplant(z, z->left);
         } else {
             y = this->minimum(z->right);
             y_original_color = y->color;
@@ -177,21 +177,21 @@ class RedBlackTree {
             if (y->parent == z) {
                 x->parent = y;
             } else {
-                this->rbTransplant(y, y->right);
+                this->_rb_transplant(y, y->right);
                 y->right = z->right;
                 y->right->parent = y;
             }
-            this->rbTransplant(z, y);
+            this->_rb_transplant(z, y);
             y->left = z->left;
             y->left->parent = y;
             y->color = z->color;
         }
         delete z;
         if (y_original_color == 0) {
-            this->deleteFix(x);
+            this->_delete(x);
         }
     }
-    void insertFix(Node<T> *k) {
+    void _insert(Node<T> *k) {
         Node<T> *u;
         while (k->parent->color == 1) {
             if (k->parent == k->parent->parent->right) {
@@ -204,11 +204,11 @@ class RedBlackTree {
                 } else {
                     if (k == k->parent->left) {
                         k = k->parent;
-                        this->rightRotate(k);
+                        this->_right_rotate(k);
                     }
                     k->parent->color = 0;
                     k->parent->parent->color = 1;
-                    this->leftRotate(k->parent->parent);
+                    this->_left_rotate(k->parent->parent);
                 }
             } else {
                 u = k->parent->parent->right;
@@ -220,11 +220,11 @@ class RedBlackTree {
                 } else {
                     if (k == k->parent->right) {
                         k = k->parent;
-                        this->leftRotate(k);
+                        this->_left_rotate(k);
                     }
                     k->parent->color = 0;
                     k->parent->parent->color = 1;
-                    this->rightRotate(k->parent->parent);
+                    this->_right_rotate(k->parent->parent);
                 }
             }
             if (k == root) {
@@ -233,23 +233,57 @@ class RedBlackTree {
         }
         root->color = 0;
     }
-    void printHelper(Node<T> *root) {
+    void _print(Node<T> *root) {
         if (root != TNULL) {
-            this->printHelper(root->left);
+            this->_print(root->left);
             std::cout << root->data << " ";
-            this->printHelper(root->right);
+            this->_print(root->right);
         }
     }
+    void _left_rotate(Node<T> *x) {
+        Node<T> *y = x->right;
+        x->right = y->left;
+        if (y->left != TNULL) {
+            y->left->parent = x;
+        }
+        y->parent = x->parent;
+        if (x->parent == nullptr) {
+            this->root = y;
+        } else if (x == x->parent->left) {
+            x->parent->left = y;
+        } else {
+            x->parent->right = y;
+        }
+        y->left = x;
+        x->parent = y;
+    }
+    void _right_rotate(Node<T> *x) {
+        Node<T> *y = x->left;
+        x->left = y->right;
+        if (y->right != TNULL) {
+            y->right->parent = x;
+        }
+        y->parent = x->parent;
+        if (x->parent == nullptr) {
+            this->root = y;
+        } else if (x == x->parent->right) {
+            x->parent->right = y;
+        } else {
+            x->parent->left = y;
+        }
+        y->right = x;
+        x->parent = y;
+    }
 
-    bool is_bst(Node<T> *node, T minKey, T maxKey) {
+    bool _is_bst(Node<T> *node, T minKey, T maxKey) {
         if (node == TNULL) {
             return true;
         }
         if (node->data < minKey || node->data > maxKey) {
             return false;
         }
-        return this->is_bst(node->left, minKey, node->data - 1) &&
-               this->is_bst(node->right, node->data + 1, maxKey);
+        return this->_is_bst(node->left, minKey, node->data - 1) &&
+               this->_is_bst(node->right, node->data + 1, maxKey);
     }
 
  public:
@@ -263,9 +297,9 @@ class RedBlackTree {
         root = TNULL;
     }
     ~RedBlackTree<T>() {
-        this->sew_tree();
-        Node<T> *min = this->minimum(this->getRoot());
-        Node<T> *max = this->maximum(this->getRoot());
+        this->_sew_tree();
+        Node<T> *min = this->minimum(this->get_root());
+        Node<T> *max = this->maximum(this->get_root());
         Node<T> *tmp;
         while (min != max) {
             tmp = min;
@@ -275,8 +309,8 @@ class RedBlackTree {
         delete max;
         delete TNULL;
     }
-    Node<T> *searchTree(T k) {
-        return this->searchTreeHelper(this->root, k);
+    Node<T> *search_tree(T k) {
+        return this->_search_tree(this->root, k);
     }
     Node<T> *minimum(Node<T> *node) {
         while (node->left != TNULL) {
@@ -312,52 +346,18 @@ class RedBlackTree {
         }
         return y;
     }
-    Node<T> *getRoot() {
+    Node<T> *get_root() {
         return this->root;
     }
 
     void preorder() {
-        this->preOrderHelper(this->root);
+        this->_preorder(this->root);
     }
     void inorder() {
-        this->inOrderHelper(this->root);
+        this->_inorder(this->root);
     }
     void postorder() {
-        this->postOrderHelper(this->root);
-    }
-    void leftRotate(Node<T> *x) {
-        Node<T> *y = x->right;
-        x->right = y->left;
-        if (y->left != TNULL) {
-            y->left->parent = x;
-        }
-        y->parent = x->parent;
-        if (x->parent == nullptr) {
-            this->root = y;
-        } else if (x == x->parent->left) {
-            x->parent->left = y;
-        } else {
-            x->parent->right = y;
-        }
-        y->left = x;
-        x->parent = y;
-    }
-    void rightRotate(Node<T> *x) {
-        Node<T> *y = x->left;
-        x->left = y->right;
-        if (y->right != TNULL) {
-            y->right->parent = x;
-        }
-        y->parent = x->parent;
-        if (x->parent == nullptr) {
-            this->root = y;
-        } else if (x == x->parent->right) {
-            x->parent->right = y;
-        } else {
-            x->parent->left = y;
-        }
-        y->right = x;
-        x->parent = y;
+        this->_postorder(this->root);
     }
     void insert(T key) {
         Node<T> *node = new Node<T>;
@@ -393,20 +393,20 @@ class RedBlackTree {
         if (node->parent->parent == nullptr) {
             return;
         }
-        this->insertFix(node);
+        this->_insert(node);
     }
-    void Sew() {
-        this->sew_tree();
+    void sew() {
+        this->_sew_tree();
     }
-    void deleteNode(T data) {
-        this->deleteNodeHelper(this->root, data);
+    void delete_node(T data) {
+        this->_delete_node(this->root, data);
     }
-    void printTree() {
-        this->printHelper(this->root);
+    void print_tree() {
+        this->_print(this->root);
     }
 
-    bool isBST() {
-        return is_bst(
+    bool is_bst() {
+        return _is_bst(
             this->root,
             this->minimum(root)->data,
             this->maximum(root)->data);

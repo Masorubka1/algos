@@ -17,20 +17,23 @@ class dynamic_array {
         m_size = a.m_size;
         m_capacity = m_size;
         m_data = nullptr;
-        if (m_size != 0)
+        if (m_size != 0) {
             m_data = new T[m_size];
-        else
+        } else {
             m_data = 0;
-        for (int i = 0; i < m_size; ++i)
+        }
+        for (int i = 0; i < m_size; ++i) {
             m_data[i] = a.m_data[i];
+        }
     }
     explicit dynamic_array(int size) {
         m_size = size;
         m_capacity = size;
-        if (size != 0)
+        if (size != 0) {
             m_data = new T[size];
-        else
+        } else {
             m_data = 0;
+        }
     }
     ~dynamic_array() {
         if (m_data) {

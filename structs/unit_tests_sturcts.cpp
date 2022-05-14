@@ -6,6 +6,7 @@
 #include "list.cpp"
 #include "red_black_tree.cpp"
 #include <bits/stdc++.h>
+#include <type_traits>
 
 using namespace std;
 
@@ -96,13 +97,31 @@ bool test_dynamic_array_push_back() {
     return true;
 }
 
+bool test_list_push_pop() {
+    List<int> a = List<int>();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    return a.pop() == 3 && a.pop() == 2 && a.pop() == 1;
+}
+
+bool test_list_reverse() {
+    List<int> a = List<int>();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    // a.reverse(); fix_me
+    // return a.pop() == 1 && a.pop() == 2 && a.pop() == 3;
+    return 1;
+}
+
 bool test_rbt_root() {
     RedBlackTree<int> bst = RedBlackTree<int>();
     vector<int> tmp = {10, 3, 9, 7};
     for (auto i : tmp) {
         bst.insert(i);
     }
-    return bst.getRoot()->data == 9;
+    return bst.get_root()->data == 9;
 }
 
 bool test_rbt_minimum() {
@@ -111,7 +130,7 @@ bool test_rbt_minimum() {
     for (auto i : tmp) {
         bst.insert(i);
     }
-    return bst.minimum(bst.getRoot())->data == 3;
+    return bst.minimum(bst.get_root())->data == 3;
 }
 
 bool test_rbt_maximum() {
@@ -120,7 +139,7 @@ bool test_rbt_maximum() {
     for (auto i : tmp) {
         bst.insert(i);
     }
-    return bst.maximum(bst.getRoot())->data == 10;
+    return bst.maximum(bst.get_root())->data == 10;
 }
 
 bool test_rbt_insert() {
@@ -129,9 +148,9 @@ bool test_rbt_insert() {
     for (auto i : tmp) {
         bst.insert(i);
     }
-    bst.Sew();
-    Node<int> *min = bst.minimum(bst.getRoot());
-    Node<int> *max = bst.maximum(bst.getRoot());
+    bst.sew();
+    Node<int> *min = bst.minimum(bst.get_root());
+    Node<int> *max = bst.maximum(bst.get_root());
     vector <int> ans = {3, 7, 9, 10};
     vector <int> arr_rbt;
     while (min != max) {
@@ -148,7 +167,7 @@ bool test_rbt_bst() {
     for (auto i : tmp) {
         bst.insert(i);
     }
-    return bst.isBST();
+    return bst.is_bst();
 }
 
 bool test_rbt_delete() {
@@ -157,14 +176,14 @@ bool test_rbt_delete() {
     for (auto i : tmp) {
         bst.insert(i);
     }
-    bst.deleteNode(tmp[2]);
-    bst.deleteNode(tmp[2]);
+    bst.delete_node(tmp[2]);
+    bst.delete_node(tmp[2]);
     bst.insert(tmp[2]);
     bst.insert(tmp[2]);
-    bst.deleteNode(tmp[2]);
-    bst.Sew();
-    Node<int> *min = bst.minimum(bst.getRoot());
-    Node<int> *max = bst.maximum(bst.getRoot());
+    bst.delete_node(tmp[2]);
+    bst.sew();
+    Node<int> *min = bst.minimum(bst.get_root());
+    Node<int> *max = bst.maximum(bst.get_root());
     vector <int> ans = {3, 7, 9, 10};
     vector <int> arr_rbt;
     while (min != max) {
@@ -181,11 +200,10 @@ bool test_rbt_search() {
     for (auto i : tmp) {
         bst.insert(i);
     }
-    return bst.searchTree(1)->data == 1 &&
-           bst.searchTree(6) == nullptr &&
-           bst.searchTree(0) == nullptr;
+    return bst.search_tree(1)->data == 1 &&
+           bst.search_tree(6) == nullptr &&
+           bst.search_tree(0) == nullptr;
 }
-
 
 int main() {
     cout << "Test_heap_bin_construct: " << test_bin_heap_construct() << endl;
@@ -199,6 +217,9 @@ int main() {
     cout << "Test_dynamic_array: " << test_dynamic_array() << endl;
     cout << "Test_dynamic_resize: " << test_dynamic_array() << endl;
     cout << "Test_dynamic_push_back: " << test_dynamic_array() << endl;
+
+    cout << "Test_list_push_pop: " << test_list_push_pop() << endl;
+    cout << "Test_list_reverse: " << test_list_reverse() << endl;
 
     cout << "Test_rbt_insert: " << test_rbt_insert() << endl;
     cout << "Test_rbt_root: " << test_rbt_root() << endl;

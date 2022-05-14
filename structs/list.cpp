@@ -1,88 +1,79 @@
 #include <bits/stdc++.h>
+#include <cstring>
 
 template <class T>
 class List {
  public:
     struct _list {
         T elem;
-        _list* next;
-        _list* prev;
+        _list *next;
+        ~_list() { delete next; next = nullptr;}
     };
 
     explicit List(int n = 0) {
         start = nullptr;
+        cur = nullptr;
+        capacity = n;
     }
     ~List() {
-        std::stack <_list*> q;
-        _list* cur = start;
-        do {
-            if (cur != nullptr) {
-                q.push(cur);
-                cur = cur->next;
-            } else if (capacity > 0) {
-                q.pop();
-                capacity--;
-            }
-        } while (!q.empty());
+        delete this->start;
     }
 
     void push(T elem) {
-        _list* cur = start;
-        _list* prev = nullptr;
-        if (start == nullptr) {
-            start = new _list;
-            start->elem = elem;
-            start->next = nullptr;
-            start->prev = nullptr;
-            capacity++;
+        if (this->capacity == 0) {
+            this->start = new _list;
+            this->start->elem = elem;
+            this->start->next = nullptr;
+            this->capacity = 1;
+            this->cur = this->start;
             return;
         }
-        while (cur != nullptr) {
-            prev = cur;
-            cur = cur->next;
-        }
-        cur = new _list;
-        cur->elem = elem;
+        _list *prev = this->cur;
+        this->cur = new _list;
+        this->cur->elem = elem;
         prev->next = cur;
-        cur->prev = prev;
-        capacity++;
+        this->capacity++;
     }
     void reverse() {
-        if (start == nullptr) {
+        if (this->capacity <= 1) {
             return;
         }
-        struct _list* curr;
-        struct _list* next;
-        struct _list* prev = nullptr;
-        curr = start;
-        while (curr) {
-            next = curr->next;
-            curr->next = prev;
-            prev = curr;
-            curr = next;
+        _list *curr = this->start;
+        _list *prev = nullptr;
+        while (curr != nullptr) {
+            std::swap(prev, curr->next);
+            std::swap(prev, curr);
         }
-        start = prev;
+        this->start = prev;
     }
 
     T pop() {
-        _list* cur = start;
-        _list* prev = nullptr;
-        while (cur->next != nullptr) {
-            prev = cur;
-            cur = cur->next;
+        if (this->capacity == 0) {
+            throw "-1 elem left";
+            return 0;
         }
-        if (prev == nullptr) {
-            start = nullptr;
+        T el = this->cur->elem;
+        _list *ans = nullptr;
+        if (this->capacity == 1) {
+            this->start = nullptr;
+        } else {
+            _list *tmp = this->start;
+            while (tmp->next != this->cur) {
+                tmp = tmp->next;
+            }
+            tmp->next = nullptr;
+            ans = tmp;
         }
-        T el = cur->elem;
-        if (prev != nullptr) {
-            prev->next = nullptr;
+        if (ans != nullptr) {
+            delete ans->next;
         }
-        capacity--;
+        this->capacity--;
+        this->cur = ans;
         return el;
     }
 
  private:
-    _list* start;
+    _list *start;
+    _list *cur;
     int capacity;
 };

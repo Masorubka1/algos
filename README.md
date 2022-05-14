@@ -15,3 +15,5 @@ realized structs:
 - hash_table
 - list
 - red_black_tree
+
+run_tests: make -f Makefile build-*
